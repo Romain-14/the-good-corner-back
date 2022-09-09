@@ -1,9 +1,9 @@
-import Product from "../models/product.js"
+import Query from "../models/Query.js"
 
-export const findAll = async (req,res) => {
+export const findAll = async (req, res, next) => {
     const query = "SELECT * FROM product";
     try {
-        const result = await Product.getAllDatas(query);
+        const result = await Query.getAllDatas(query);
         res.status(200).json({
             msg: "products retrieved",
             result: result
@@ -18,7 +18,7 @@ export const find = async (req, res, next) => {
     const query = `SELECT * FROM product WHERE ${req.params.col_name} = ?`;
 
     try {
-        const result = await Product.getDatas(query, req.params.value);
+        const result = await Query.getDatas(query, req.params.value);
         if(result.length){
             res.status(200).json({
                 msg: "product(s) retrieved",
@@ -34,7 +34,7 @@ export const find = async (req, res, next) => {
     }
 }
 
-export const create = async (req, res) => {
+export const create = async (req, res, next) => {
     const datas = {
         title: req.body.title,
         content: req.body.content,
@@ -44,7 +44,7 @@ export const create = async (req, res) => {
     }
     const query = "INSERT INTO product (title, content, img_url, user_id, category_id) VALUES (?,?,?,?,?)";
     try {
-        await Product.save(query, datas);
+        await Query.save(query, datas);
         res.status(201).json({
             msg: "product created",
         })

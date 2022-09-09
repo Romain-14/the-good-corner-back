@@ -1,10 +1,12 @@
-import Category from '../models/category.js'
+import Query from '../models/Query.js'
 
+
+// on a placé le middleware Auth sur cette route, impliquant que seul un utilisateur connecté qui a donc eu son TOKEN de généré peut accéder
 export const create = async (req, res) => {
-    const {title} = req.body;
+    console.log(req.params);
     try {
         const query1 = "SELECT * FROM category WHERE title = ?";
-        const result = await Category.getData(query1, title);
+        const result = await Query.getDataByValue(query1, req.body.title);
         if(result.length){
             res.status(409).json({
                 msg: 'category already existing',
@@ -12,7 +14,7 @@ export const create = async (req, res) => {
             return;
         }
         const query2 = "INSERT INTO category (title) VALUES (?)";
-            await Category.save(query2, title);
+            await Query.save(query2, req.body);
             res.status(201).json({
                 msg: "category added",
             });        
@@ -24,7 +26,7 @@ export const create = async (req, res) => {
 export const findAll = async (req,res)=>{
     try {
         const query = "SELECT * FROM category"
-        const result = await Category.getDatas(query);
+        const result = await Query.getAllDatas(query);
         res.status(200).json({
             result: result,
         })
