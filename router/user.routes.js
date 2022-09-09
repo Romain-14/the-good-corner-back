@@ -1,7 +1,10 @@
 import express from 'express'
 import { findAll, findOne, create, signin, update, remove } from '../controllers/user.js';
+import {auth} from '../middlewares/auth.js';
 
 const router = express.Router();
+
+router.get("/checktoken", auth, findOne)
 
 router.get("/all", findAll);
 router.get("/:uuid", findOne);

@@ -23,12 +23,12 @@ export const findAll = async (req, res, next) => {
 
 export const findOne = async (req, res, next) => {
     try {
-        const query = "SELECT * FROM user WHERE uuid = ?";
+        const query = "SELECT alias, uuid FROM user WHERE uuid = ?";
         const user = await Query.getDataByValue(query, req.params.uuid);
 
         res.status(200).json({
             msg: "user retrieved",
-            result: user,
+            result: user[0],
         });
         return;
     } catch (error) {
@@ -44,7 +44,7 @@ export const create = async (req, res, next) => {
             uuid: uuidv4(),
         }
         const query1 = "SELECT * FROM user WHERE alias = ?";
-        const user = await Query.getData(query1, req.body.alias)
+        const user = await Query.getDataByValue(query1, req.body.alias)
         if(user.length){
             res.status(409).json({
                 msg: 'user already existing',
@@ -67,14 +67,12 @@ export const signin = async (req, res, next) => {
         const {alias, password} = req.body;
         const query1 = "SELECT * FROM user WHERE alias = ?";
         const [user] = await Query.getDataByValue(query1, alias);
-
-        if(!user){
+        if(!user || (user.alias !== req.body.alias)){
             res.status(404).json({
                 msg: "user does not exist",
             });
             return;
         } 
-
         const isSame = await compare(password, user.password);        
         if(isSame){
             // signature du token, 2 arguments :

@@ -12,8 +12,8 @@ export const findAll = async (req, res, next) => {
     } catch (error) {
         return next(error);
     }
-
 }
+
 export const find = async (req, res, next) => {
     const query = `SELECT * FROM product WHERE ${req.params.col_name} = ?`;
 
